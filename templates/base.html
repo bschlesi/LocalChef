@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LocalChef{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <ul class="nav-list">
+                <li class="nav-item {% if active_page == 'cooking' %}active{% endif %}">
+                    <span class="nav-bullet">&bull;</span>
+                    <a href="{{ url_for('cooking_page') }}">Cooking</a>
+                </li>
+                <li class="nav-item {% if active_page == 'pantry' %}active{% endif %}">
+                    <span class="nav-bullet">&bull;</span>
+                    <a href="{{ url_for('pantry_page') }}">Pantry</a>
+                </li>
+                <li class="nav-item {% if active_page == 'customization' %}active{% endif %}">
+                    <span class="nav-bullet">&bull;</span>
+                    <a href="{{ url_for('customization_page') }}">Customization</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

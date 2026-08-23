@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Cooking - LocalChef{% endblock %}
+
+{% block content %}
+<div class="cooking-container">
+    <!-- Top Action Shortcuts -->
+    <div class="top-shortcuts">
+        <button id="giveRecipeBtn" class="btn btn-shortcut">Give me a recipe</button>
+        <button id="goShoppingBtn" class="btn btn-shortcut">I’m going shopping</button>
+    </div>
+
+    <!-- Conversation Feed Area -->
+    <div class="chat-feed" id="chatFeed">
+        <!-- Initial welcome / assistant message -->
+        <div class="chat-bubble assistant-bubble">
+            <div class="bubble-content">
+                <p><strong>Welcome to LocalChef!</strong></p>
+                <p>I can help you build recipes based directly on the items in your pantry, or generate a shopping list for your next grocery trip.</p>
+                <p>Try clicking <em>"Give me a recipe"</em> above or typing a dish name like <code>Chicken Fajitas</code> below!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Input Bar -->
+    <div class="prompt-bar-wrapper">
+        <div class="prompt-bar">
+            <input type="text" id="promptInput" placeholder="Type prompt here..." autocomplete="off">
+            <button id="sendBtn" class="btn-send" title="Send message">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/cooking.js') }}"></script>
+{% endblock %}

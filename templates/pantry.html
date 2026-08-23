@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Pantry - LocalChef{% endblock %}
+
+{% block content %}
+<div class="pantry-container">
+    <h1 class="page-title">Current Pantry</h1>
+
+    <div class="table-card">
+        <div class="table-wrapper">
+            <table class="pantry-table" id="pantryTable">
+                <thead>
+                    <tr>
+                        <th class="select-col">
+                            <input type="checkbox" id="selectAllCheckbox" title="Select All">
+                        </th>
+                        <th>Date added/updated</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody id="pantryTableBody">
+                    <!-- Loaded dynamically via pantry.js -->
+                    <tr class="empty-row">
+                        <td colspan="4">Loading pantry items...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="pantry-actions">
+        <button id="addBtn" class="btn btn-action">Add items</button>
+        <button id="removeBtn" class="btn btn-action">Remove items</button>
+        <button id="importBtn" class="btn btn-secondary">Import CSV</button>
+    </div>
+</div>
+
+<!-- Modal: Add Item -->
+<div id="addModal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add Pantry Item</h3>
+            <button class="close-btn" id="closeAddModal">&times;</button>
+        </div>
+        <form id="addItemForm" class="modal-form">
+            <div class="form-group">
+                <label for="itemInput">Item Name *</label>
+                <input type="text" id="itemInput" placeholder="e.g. Tyson chicken breast" required autofocus>
+            </div>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="qtyInput">Quantity *</label>
+                    <input type="number" id="qtyInput" step="any" min="0" placeholder="e.g. 1" required>
+                </div>
+                <div class="form-group half">
+                    <label for="unitInput">Unit(s)</label>
+                    <input type="text" id="unitInput" placeholder="e.g. lb, oz, count, can">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="dateInput">Date</label>
+                <input type="date" id="dateInput">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-cancel" id="cancelAddModal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Import CSV -->
+<div id="importModal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Import Pantry CSV</h3>
+            <button class="close-btn" id="closeImportModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Place your CSV file inside the local <code>./data/</code> folder. The CSV should contain columns: <strong>Date Added/Updated, Item, Quantity, Unit(s)</strong>.</p>
+            <div class="form-group" style="margin-top: 15px;">
+                <label for="importFilenameInput">File Name (in <code>./data/</code>):</label>
+                <input type="text" id="importFilenameInput" value="pantry_import.csv" placeholder="pantry_import.csv">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-cancel" id="cancelImportModal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmImportBtn">Import CSV</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pantry.js') }}"></script>
+{% endblock %}

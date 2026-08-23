@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Customization - LocalChef{% endblock %}
+
+{% block content %}
+<div class="customization-container">
+    <h1 class="page-title left-align">Custom Instructions</h1>
+
+    <div class="instructions-card">
+        <textarea id="customInstructions" placeholder="Type your instructions here..." rows="6"></textarea>
+    </div>
+
+    <div class="preferences-section">
+        <!-- Meal Prep Toggle -->
+        <div class="preference-row">
+            <span class="preference-label">Optimize recipes for meal prepping?</span>
+            <div class="toggle-group" id="mealPrepToggleGroup">
+                <button type="button" class="toggle-option" data-value="true">Yes</button>
+                <button type="button" class="toggle-option" data-value="false">No</button>
+            </div>
+        </div>
+
+        <!-- Macros Toggle -->
+        <div class="preference-row">
+            <span class="preference-label">Report macros and portion sizing?</span>
+            <div class="toggle-group" id="macrosToggleGroup">
+                <button type="button" class="toggle-option" data-value="true">Yes</button>
+                <button type="button" class="toggle-option" data-value="false">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Pantry Action -->
+    <div class="danger-zone">
+        <button id="clearPantryBtn" class="btn btn-danger-link">Clear Pantry</button>
+    </div>
+
+    <!-- Save Settings Button / Status -->
+    <div class="save-section">
+        <button id="saveSettingsBtn" class="btn btn-action">Save Changes</button>
+        <span id="saveStatus" class="save-status"></span>
+    </div>
+</div>
+
+<!-- Clear Pantry Confirmation Modal -->
+<div id="clearConfirmModal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Clear Entire Pantry?</h3>
+            <button class="close-btn" id="closeClearModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove <strong>all items</strong> from your pantry? This action cannot be undone.</p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-cancel" id="cancelClearModal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmClearBtn">Yes, Clear Pantry</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customization.js') }}"></script>
+{% endblock %}

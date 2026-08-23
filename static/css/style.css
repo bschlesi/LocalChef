@@ -1,0 +1,656 @@
+/* Reset & Base Variables */
+:root {
+    --bg-color: #ffffff;
+    --sidebar-border: #d1d5db;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --nav-active: #111827;
+    --btn-bg: #eceff1;
+    --btn-hover: #dfe3e6;
+    --btn-primary-bg: #2563eb;
+    --btn-primary-hover: #1d4ed8;
+    --user-bubble-bg: #93c5fd;
+    --user-bubble-text: #0f172a;
+    --assistant-bubble-bg: #dbeafe;
+    --assistant-bubble-text: #1e293b;
+    --border-color: #e5e7eb;
+    --table-border: #cbd5e1;
+    --table-header-bg: #f8fafc;
+    --danger-color: #dc2626;
+    --danger-hover: #b91c1c;
+    --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* App Layout */
+.app-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    min-width: 220px;
+    border-right: 1.5px solid var(--sidebar-border);
+    padding: 40px 20px;
+    background-color: #ffffff;
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.05rem;
+    color: var(--text-muted);
+}
+
+.nav-item a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.nav-bullet {
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text-muted);
+}
+
+.nav-item.active {
+    font-weight: 700;
+    color: var(--nav-active);
+}
+
+.nav-item.active .nav-bullet {
+    color: var(--nav-active);
+}
+
+.nav-item:hover a {
+    color: var(--nav-active);
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Common Typography & Headers */
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #374151;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-title.left-align {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn {
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 12px;
+    border: 1px solid #9ca3af;
+    background-color: var(--btn-bg);
+    color: #1f2937;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn:hover {
+    background-color: var(--btn-hover);
+}
+
+.btn-primary {
+    background-color: var(--btn-primary-bg);
+    color: #ffffff;
+    border-color: var(--btn-primary-bg);
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+}
+
+.btn-secondary {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    border-color: #d1d5db;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: #ffffff;
+    border-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover);
+}
+
+.btn-action {
+    min-width: 140px;
+    padding: 12px 28px;
+    font-size: 1rem;
+}
+
+.btn-shortcut {
+    min-width: 150px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 14px;
+}
+
+.btn-danger-link {
+    background: none;
+    border: none;
+    color: #111827;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-danger-link:hover {
+    color: var(--danger-color);
+    text-decoration: underline;
+}
+
+/* -------------------------------------------------------------
+   Pantry Page Styles
+   ------------------------------------------------------------- */
+.pantry-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.table-card {
+    border: 1.5px solid var(--table-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    flex: 1;
+    max-height: calc(100vh - 220px);
+    display: flex;
+    flex-direction: column;
+}
+
+.table-wrapper {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.pantry-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.pantry-table th,
+.pantry-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--table-border);
+    border-right: 1px solid var(--table-border);
+    font-size: 0.95rem;
+}
+
+.pantry-table th:last-child,
+.pantry-table td:last-child {
+    border-right: none;
+}
+
+.pantry-table th {
+    background-color: var(--table-header-bg);
+    font-weight: 600;
+    color: #374151;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.pantry-table th.select-col,
+.pantry-table td.select-col {
+    width: 44px;
+    text-align: center;
+    padding: 10px;
+}
+
+.pantry-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.pantry-table tbody tr.selected {
+    background-color: #eff6ff;
+}
+
+.empty-row td {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px;
+}
+
+.pantry-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    margin-top: 25px;
+}
+
+/* -------------------------------------------------------------
+   Cooking / Recipe Page Styles
+   ------------------------------------------------------------- */
+.cooking-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+.top-shortcuts {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.chat-feed {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 90px;
+    padding-right: 10px;
+}
+
+.chat-bubble {
+    max-width: 78%;
+    padding: 18px 24px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+.user-bubble {
+    align-self: flex-end;
+    background-color: var(--user-bubble-bg);
+    color: var(--user-bubble-text);
+    border-bottom-right-radius: 4px;
+    font-weight: 500;
+}
+
+.assistant-bubble {
+    align-self: flex-start;
+    background-color: var(--assistant-bubble-bg);
+    color: var(--assistant-bubble-text);
+    border-bottom-left-radius: 4px;
+}
+
+.bubble-content p {
+    margin-bottom: 12px;
+}
+
+.bubble-content p:last-child {
+    margin-bottom: 0;
+}
+
+.bubble-content ul,
+.bubble-content ol {
+    margin-left: 22px;
+    margin-bottom: 12px;
+}
+
+.bubble-content ul:last-child,
+.bubble-content ol:last-child {
+    margin-bottom: 0;
+}
+
+.bubble-content li {
+    margin-bottom: 4px;
+}
+
+.bubble-content h3,
+.bubble-content h4 {
+    margin-top: 14px;
+    margin-bottom: 8px;
+    font-size: 1.05rem;
+}
+
+.loading-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 0;
+}
+
+.loading-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #3b82f6;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+/* Prompt Bar */
+.prompt-bar-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, #ffffff 80%, rgba(255,255,255,0));
+    padding-top: 10px;
+}
+
+.prompt-bar {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #6b7280;
+    background-color: #e5e7eb;
+    border-radius: 10px;
+    padding: 8px 16px;
+}
+
+.prompt-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    color: #111827;
+}
+
+.prompt-bar input::placeholder {
+    color: #4b5563;
+}
+
+.btn-send {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.15s ease;
+}
+
+.btn-send:hover {
+    color: #111827;
+}
+
+/* -------------------------------------------------------------
+   Customization Page Styles
+   ------------------------------------------------------------- */
+.customization-container {
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.instructions-card textarea {
+    width: 100%;
+    border: 1.5px solid #4b5563;
+    border-radius: 20px;
+    background-color: #f3f4f6;
+    padding: 20px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #1f2937;
+    outline: none;
+    resize: vertical;
+    min-height: 140px;
+}
+
+.instructions-card textarea:focus {
+    border-color: #2563eb;
+    background-color: #ffffff;
+}
+
+.preferences-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 1.1rem;
+}
+
+.preference-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.preference-label {
+    color: #374151;
+    font-weight: 500;
+}
+
+.toggle-group {
+    display: inline-flex;
+    gap: 16px;
+}
+
+.toggle-option {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 1.1rem;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+}
+
+.toggle-option.active {
+    font-weight: 700;
+    color: #111827;
+}
+
+.toggle-option:hover:not(.active) {
+    color: #374151;
+}
+
+.danger-zone {
+    margin-top: 10px;
+}
+
+.save-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.save-status {
+    font-size: 0.95rem;
+    color: #059669;
+    font-weight: 500;
+}
+
+/* -------------------------------------------------------------
+   Modals & Toast
+   ------------------------------------------------------------- */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    padding: 28px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 1.3rem;
+    color: #111827;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #6b7280;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #111827;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-group input {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .half {
+    flex: 1;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    background-color: #1f2937;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+}
+
+.toast.error {
+    background-color: #dc2626;
+}
+
+.toast.success {
+    background-color: #059669;
+}
