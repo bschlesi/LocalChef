@@ -12,10 +12,12 @@ function showToast(message, type = 'info') {
 const chatFeed = document.getElementById('chatFeed');
 const promptInput = document.getElementById('promptInput');
 const sendBtn = document.getElementById('sendBtn');
+const stopBtn = document.getElementById('stopBtn');
 const giveRecipeBtn = document.getElementById('giveRecipeBtn');
 const goShoppingBtn = document.getElementById('goShoppingBtn');
 
 let isGenerating = false;
+let currentAbortController = null;
 
 function scrollToBottom() {
     chatFeed.scrollTop = chatFeed.scrollHeight;
@@ -34,6 +36,7 @@ function createAssistantLoadingBubble() {
     bubble.className = 'chat-bubble assistant-bubble loading';
     bubble.innerHTML = `
         <div class="bubble-content">
+            <div class="gen-status">Connecting to Ollama…</div>
             <div class="loading-dots">
                 <span></span><span></span><span></span>
             </div>
@@ -124,72 +127,199 @@ function updateAssistantBubble(bubble, rawContent, isError = false) {
     scrollToBottom();
 }
 
-// Generate Recipe
-async function handleSendPrompt() {
-    if (isGenerating) return;
-    const prompt = promptInput.value.trim();
-    if (!prompt) return;
+function formatElapsed(seconds) {
+    if (seconds == null) return '';
+    if (seconds < 60) return `${Math.round(seconds)}s`;
+    const m = Math.floor(seconds / 60);
+    const s = Math.round(seconds % 60);
+    return `${m}m ${s}s`;
+}
 
-    promptInput.value = '';
-    appendUserBubble(prompt);
-    
+function wordCount(text) {
+    const t = text.trim();
+    return t ? t.split(/\s+/).length : 0;
+}
+
+function renderStreamingBubble(bubble, statusHtml, accumulatedText) {
+    bubble.querySelector('.bubble-content').innerHTML =
+        `<div class="gen-status">${statusHtml}</div>` + formatMarkdownToHtml(accumulatedText);
+    scrollToBottom();
+}
+
+function setStopVisible(visible) {
+    if (!stopBtn) return;
+    stopBtn.style.display = visible ? 'flex' : 'none';
+    sendBtn.style.display = visible ? 'none' : 'flex';
+}
+
+// Parses a fetch() ReadableStream of `data: {...}\n\n` frames (SSE-style,
+// hand-rolled since EventSource doesn't support POST bodies) and invokes
+// onEvent for each parsed JSON payload as it arrives.
+async function streamSSE(url, body, { signal, onEvent }) {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal,
+    });
+
+    if (!res.ok) {
+        let errMsg = `Request failed (${res.status})`;
+        try {
+            const errJson = await res.json();
+            if (errJson && errJson.error) errMsg = errJson.error;
+        } catch (_) { /* response wasn't JSON, keep default message */ }
+        throw new Error(errMsg);
+    }
+    if (!res.body) {
+        throw new Error('This browser does not support streaming responses.');
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let sepIndex;
+        while ((sepIndex = buffer.indexOf('\n\n')) !== -1) {
+            const rawEvent = buffer.slice(0, sepIndex);
+            buffer = buffer.slice(sepIndex + 2);
+            const dataLine = rawEvent.split('\n').find(line => line.startsWith('data: '));
+            if (!dataLine) continue;
+            try {
+                onEvent(JSON.parse(dataLine.slice(6)));
+            } catch (e) {
+                console.error('Failed to parse stream event:', dataLine, e);
+            }
+        }
+    }
+}
+
+// Drives a streamed generation (recipe or shopping list) against a loading
+// bubble, updating it live as events arrive.
+async function runStreamedGeneration(url, body, userBubbleText) {
+    if (isGenerating) return;
+    if (userBubbleText) appendUserBubble(userBubbleText);
+
     isGenerating = true;
     promptInput.disabled = true;
-    sendBtn.disabled = true;
+    setStopVisible(true);
+
     const loadingBubble = createAssistantLoadingBubble();
+    let accumulated = '';
+    let sawFirstToken = false;
+    let lastRenderAt = 0;
+    const RENDER_THROTTLE_MS = 120;
+
+    currentAbortController = new AbortController();
 
     try {
-        const res = await fetch('/api/recipe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: prompt })
+        await streamSSE(url, body, {
+            signal: currentAbortController.signal,
+            onEvent: (event) => {
+                switch (event.type) {
+                    case 'status':
+                        renderStreamingBubble(loadingBubble, `⏳ ${escapeHtml(event.message)}`, accumulated);
+                        break;
+
+                    case 'heartbeat':
+                        renderStreamingBubble(
+                            loadingBubble,
+                            `⏳ Still working… ${formatElapsed(event.elapsed)} elapsed`,
+                            accumulated
+                        );
+                        break;
+
+                    case 'stalled':
+                        renderStreamingBubble(
+                            loadingBubble,
+                            `⚠️ ${escapeHtml(event.message)} (${formatElapsed(event.elapsed)} elapsed)`,
+                            accumulated
+                        );
+                        break;
+
+                    case 'chunk': {
+                        if (!sawFirstToken) {
+                            sawFirstToken = true;
+                            loadingBubble.classList.remove('loading');
+                        }
+                        accumulated += event.content;
+                        const now = performance.now();
+                        if (now - lastRenderAt > RENDER_THROTTLE_MS) {
+                            lastRenderAt = now;
+                            renderStreamingBubble(
+                                loadingBubble,
+                                `✍️ Generating… ${formatElapsed(event.elapsed)} · ~${wordCount(accumulated)} words so far`,
+                                accumulated
+                            );
+                        }
+                        break;
+                    }
+
+                    case 'done': {
+                        const speed = event.tokens_per_sec ? ` · ${event.tokens_per_sec} tok/s` : '';
+                        const statsLine = event.tokens
+                            ? `Done in ${formatElapsed(event.elapsed)} · ${event.tokens} tokens${speed}`
+                            : `Done in ${formatElapsed(event.elapsed)}`;
+                        loadingBubble.classList.remove('loading');
+                        renderStreamingBubble(loadingBubble, `✅ ${statsLine}`, accumulated);
+                        break;
+                    }
+
+                    case 'error':
+                        updateAssistantBubble(loadingBubble, event.message || 'Something went wrong.', true);
+                        break;
+
+                    default:
+                        // Unknown event type — ignore rather than break the stream.
+                        break;
+                }
+            },
         });
-        const data = await res.json();
-        if (data.success) {
-            updateAssistantBubble(loadingBubble, data.recipe);
-        } else {
-            updateAssistantBubble(loadingBubble, data.error || 'Failed to generate recipe.', true);
-        }
     } catch (err) {
-        updateAssistantBubble(loadingBubble, err.message, true);
+        if (err.name === 'AbortError') {
+            updateAssistantBubble(
+                loadingBubble,
+                accumulated
+                    ? `Stopped. Partial response is shown above:\n\n${accumulated}`
+                    : 'Generation stopped before any text arrived.',
+                !accumulated
+            );
+            if (accumulated) {
+                renderStreamingBubble(loadingBubble, '🛑 Stopped by user', accumulated);
+            }
+        } else {
+            updateAssistantBubble(loadingBubble, err.message, true);
+        }
     } finally {
         isGenerating = false;
         promptInput.disabled = false;
-        sendBtn.disabled = false;
+        setStopVisible(false);
+        currentAbortController = null;
         promptInput.focus();
     }
 }
 
-// Generate Shopping List
+async function handleSendPrompt() {
+    if (isGenerating) return;
+    const prompt = promptInput.value.trim();
+    if (!prompt) return;
+    promptInput.value = '';
+    await runStreamedGeneration('/api/recipe', { prompt }, prompt);
+}
+
 async function handleShoppingList() {
     if (isGenerating) return;
+    await runStreamedGeneration('/api/shopping', {}, "I’m going shopping");
+}
 
-    appendUserBubble("I’m going shopping");
-    
-    isGenerating = true;
-    promptInput.disabled = true;
-    sendBtn.disabled = true;
-    const loadingBubble = createAssistantLoadingBubble();
-
-    try {
-        const res = await fetch('/api/shopping', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
-        });
-        const data = await res.json();
-        if (data.success) {
-            updateAssistantBubble(loadingBubble, data.shopping_list);
-        } else {
-            updateAssistantBubble(loadingBubble, data.error || 'Failed to generate shopping list.', true);
-        }
-    } catch (err) {
-        updateAssistantBubble(loadingBubble, err.message, true);
-    } finally {
-        isGenerating = false;
-        promptInput.disabled = false;
-        sendBtn.disabled = false;
-        promptInput.focus();
+function handleStopGeneration() {
+    if (currentAbortController) {
+        currentAbortController.abort();
     }
 }
 
@@ -209,6 +339,10 @@ giveRecipeBtn.addEventListener('click', () => {
 });
 
 goShoppingBtn.addEventListener('click', handleShoppingList);
+
+if (stopBtn) {
+    stopBtn.addEventListener('click', handleStopGeneration);
+}
 
 function escapeHtml(str) {
     if (!str) return '';

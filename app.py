@@ -1,5 +1,6 @@
+import json
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response, stream_with_context
 from services import pantry_service, settings_service, llm_service
 
 app = Flask(__name__)
@@ -136,33 +137,59 @@ def save_settings():
 # -------------------------------------------------------------
 # SLM (Recipe & Shopping) API
 # -------------------------------------------------------------
+#
+# These stream Server-Sent-Events style frames (`data: {...}\n\n`) instead of a
+# single JSON blob. That's what gives the frontend live visibility into what
+# Ollama is doing (tokens as they arrive, heartbeats, stall warnings) rather
+# than a silent multi-minute wait followed by one big response or nothing.
+
+def _sse(event: dict) -> str:
+    return f"data: {json.dumps(event)}\n\n"
+
+
+def _sse_response(event_generator):
+    def wrapped():
+        try:
+            for event in event_generator:
+                yield _sse(event)
+        except Exception as e:
+            # Catch-all so a bug in the generator surfaces as a visible error
+            # event instead of silently truncating the stream.
+            yield _sse({'type': 'error', 'message': str(e)})
+
+    return Response(
+        stream_with_context(wrapped()),
+        mimetype='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no',  # disable proxy buffering, if any sits in front
+        },
+    )
+
 
 @app.route('/api/recipe', methods=['POST'])
 def generate_recipe():
-    try:
-        data = request.get_json() or {}
-        prompt = data.get('prompt', '').strip()
-        if not prompt:
-            return jsonify({'success': False, 'error': 'Please provide a dish or recipe prompt.'}), 400
+    data = request.get_json() or {}
+    prompt = data.get('prompt', '').strip()
+    if not prompt:
+        return jsonify({'success': False, 'error': 'Please provide a dish or recipe prompt.'}), 400
 
-        recipe_text = llm_service.generate_recipe(prompt)
-        return jsonify({'success': True, 'recipe': recipe_text})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+    return _sse_response(llm_service.stream_recipe(prompt))
 
 
 @app.route('/api/shopping', methods=['POST'])
 def generate_shopping_list():
-    try:
-        data = request.get_json() or {}
-        prompt = data.get('prompt', '').strip()
+    data = request.get_json() or {}
+    prompt = data.get('prompt', '').strip()
 
-        shopping_text = llm_service.generate_shopping_list(prompt if prompt else None)
-        return jsonify({'success': True, 'shopping_list': shopping_text})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+    return _sse_response(llm_service.stream_shopping_list(prompt if prompt else None))
 
 
 if __name__ == '__main__':
     print("Starting LocalChef server on http://localhost:5000")
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    # threaded=True matters here: a recipe/shopping-list request now holds its
+    # connection open for the whole generation (potentially minutes on CPU-only
+    # Ollama). Without threading, the single-worker dev server would block all
+    # other requests (including the Stop button's abort and other pages) until
+    # that one finishes.
+    app.run(host='127.0.0.1', port=5000, debug=True, threaded=True)

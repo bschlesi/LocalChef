@@ -654,3 +654,25 @@ body {
 .toast.success {
     background-color: #059669;
 }
+/* -------------------------------------------------------------
+   Streaming Generation Visibility (recipe / shopping list)
+   ------------------------------------------------------------- */
+.gen-status {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #3b5bab;
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+}
+
+.gen-status-done {
+    color: #15803d;
+}
+
+.btn-stop {
+    color: var(--danger-color);
+}
+
+.btn-stop:hover {
+    color: var(--danger-hover);
+}
