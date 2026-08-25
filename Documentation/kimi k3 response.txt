@@ -1,0 +1,135 @@
+﻿here was a test I ran using Kimi K3 instant mode to get a response, ingesting the exact same pantry csv we have. In my opinion this is pretty much exactly the standard I'd hope for, although it's likely impossible to this high level with completely local development
+
+
+Input: Role: You are a cooking assistant helping create recipes for a newer cook.          Objective: Create a recipe in line with the user's request, following all rules.                      Users Request: Chicken pasta bake                   Rules: 1. Refer to pantry.csv for a complete list of all possible ingredients you have to work with. It is likely that there are many ingredients you won't use, and you may not have to use all of a specific ingredient. Do not include anything that is not in the csv file.   2. once the recipe is complete, report the number of servings made, and estimate the macros (carbs, fats, proteins) for each serving.
+
+
+Response:  # Cheesy Chicken Pasta Bake
+
+
+Here's a hearty, beginner-friendly chicken pasta bake using only ingredients from your pantry.
+
+
+---
+
+
+## Ingredients
+
+
+| Ingredient | Amount | From Pantry |
+|------------|--------|-------------|
+| Rigatoni | 12 oz (about 3/4 of the box) | Rigatoni — 16 oz available |
+| Boneless Skinless Chicken Breast | 1.5 lbs (about 2–3 breasts) | 3 lbs available |
+| Good & Gather Three Cheese Tomato Pasta Sauce | 24 oz (whole jar) | 24 oz available |
+| Fat-Free Milk | 1/2 cup | 0.5 gallons available |
+| Shredded Mozzarella | 8 oz (whole bag) | 8 oz available |
+| Grated Parmesan | 4 oz | 24 oz available |
+| Imperial Mergerine (or margarine) | 2 tablespoons | 3.25 sticks available |
+| Salt | 1 teaspoon | available |
+| Black Pepper | 1/2 teaspoon | available |
+| Garlic Powder | 1 teaspoon | available |
+| Italian Seasoning | 1 teaspoon | available |
+
+
+---
+
+
+## Equipment Needed
+- Large pot for pasta
+- Large skillet or pan for chicken
+- 9×13 inch baking dish (or any large oven-safe dish)
+- Colander
+- Cutting board and knife
+
+
+---
+
+
+## Instructions
+
+
+### 1. Prep
+Preheat your oven to **375°F (190°C)**. Lightly grease your baking dish with a little margarine or cooking spray.
+
+
+### 2. Cook the Pasta
+Bring a large pot of salted water to a boil. Add the **12 oz of rigatoni** and cook according to the package directions until **al dente** (usually 10–12 minutes). Drain and set aside.
+
+
+> **Tip:** Al dente means the pasta is still slightly firm when bitten — it will finish cooking in the oven.
+
+
+### 3. Cook the Chicken
+While the pasta cooks, cut the **1.5 lbs of chicken breast** into bite-sized cubes (about 1 inch). Heat **2 tablespoons of margarine** in a large skillet over medium-high heat.
+
+
+Add the chicken cubes and season with:
+- 1/2 teaspoon salt
+- 1/2 teaspoon black pepper
+- 1 teaspoon garlic powder
+- 1 teaspoon Italian seasoning
+
+
+Cook for **6–8 minutes**, stirring occasionally, until the chicken is browned on the outside and cooked through (no pink in the center). Remove from heat.
+
+
+### 4. Make the Sauce
+In a large bowl, combine:
+- The **24 oz jar of tomato pasta sauce**
+- **1/2 cup of fat-free milk**
+- **2 oz of grated Parmesan** (about 1/2 cup)
+
+
+Stir until smooth. The milk helps make the sauce creamier and stretches it to coat everything nicely.
+
+
+### 5. Assemble the Bake
+In your greased baking dish, combine:
+- Cooked rigatoni
+- Cooked chicken
+- The sauce mixture
+
+
+Toss everything together until evenly coated. Spread it out in an even layer.
+
+
+### 6. Top with Cheese
+Sprinkle the **8 oz of shredded mozzarella** evenly over the top, then add the remaining **2 oz of grated Parmesan**.
+
+
+### 7. Bake
+Place the dish in the preheated oven and bake for **20–25 minutes**, until the cheese is melted, bubbly, and starting to turn golden brown around the edges.
+
+
+### 8. Rest and Serve
+Let the pasta bake cool for **5 minutes** before serving — this helps it set and makes portioning easier.
+
+
+---
+
+
+## Yield & Macros
+
+
+| | Per Serving | Total Recipe |
+|---|---|---|
+| **Servings** | 1 of 6 | — |
+| **Calories** | ~628 | ~3,767 |
+| **Protein** | ~52g | ~311g |
+| **Carbs** | ~57g | ~339g |
+| **Fat** | ~20g | ~123g |
+
+
+---
+
+
+## Beginner Tips
+
+
+- **Don't overcook the pasta** in step 2 — it will keep cooking in the oven.
+- **Cut chicken evenly** so it all cooks at the same rate.
+- **Let it rest** after baking so the sauce thickens and you get clean slices.
+- **No 9×13 dish?** Use two smaller dishes or a deep oven-safe skillet.
+
+
+Enjoy your cheesy chicken pasta bake!

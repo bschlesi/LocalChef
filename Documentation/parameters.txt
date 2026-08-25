@@ -1,0 +1,5 @@
+rule: unless decided otherwise, all model calls are from locally downloaded models
+
+goal: keep runtime for a recipe generation under 10 minutes. I'm assuming most recipes will be 700-900 tokens, so if we can maintain 3 tokens/second that would be awesome.
+
+current device tech specifics: Lenovo yoga 7i with 13th Gen Intel(R) Core(TM) i7-1355U, 16 GB shared RAM, Intel(R) Iris(R) Xe Graphics

@@ -1,0 +1,24 @@
+﻿here's an example I got to work with phi4-mini in he localchef environment. as you can see, it's quite a bad response.
+
+
+Input: chicken pasta bake
+
+
+Response: Hello! I'm excited to help you whip up a delicious Chicken Pasta Bake using what's in your pantry. Let's get started!
+Ingredients List
+Note: Assuming the use of canola oil, salt as an optional base seasoning or any additional common staples that are not listed but assumed (such as eggs for binding).
+* Flour Tortillas: 6 pieces
+* Boneless Skinless Chicken Breast(s): As needed to make a filling volume with gravy.
+* Shredded Mozzarella Cheese: Assumed present from previous inventory checks.
+Cooking Instructions
+1. Preheat your oven according to the pasta bake recipe's recommended temperature (usually around 350°F or about 175°C).
+2. Cook flour tortillas in boiling water until tender, drain them and set aside.
+3. Slice boneless skinless chicken breasts into small cubes for quicker cooking; if necessary cook up a sauce using brown rice as suggested by pantry ingredients to complement the dish - sauté it with garlic powder (use approximately half of what's listed), cumin seeds which are not in your current inventory but commonly available, and spices like chili pepper. Simmer until well combined.
+4. Mix cooked tortillas thoroughly into chicken gravy/sauce created earlier for a binding effect; this step would ideally require eggs as mentioned above to bind the mixture if they were part of our pantry stocks at that time - though we don't have them listed now so we're skipping it, or alternatively using milk (which you do). This creates your pasta bake filling.
+5. Preheat additional oven-safe dish suitable for baking such a recipe; place chicken and cheese mix inside ensuring it's evenly spread out in the bottom of this tray/pan/bake ware to allow even cooking/cooking through without burning any parts, cover with foil loosely (to trap moisture within) before placing into an already-preheated 350°F/175°C oven.
+6. Bake for approximately twenty minutes until heated thoroughly throughout; remove from heat and let it cool a bit down after taking out of the bakeware/pan/bread to allow flavors better integrate together - this step can be skipped if time constraints are in place or not desired by you as per your custom preferences.
+Extras
+Macros: Assuming approximately 450-500 calories, based on chicken breast used for filling and ingredients listed above.
+Meal-prep storage tips:
+Storing leftover pasta bake? Place it into an airtight container to keep fresh up-to four days when stored in a refrigerator. Before serving again later ensure it's reheated thoroughly (to eliminate bacteria). You can also warm leftovers using microwave, ideally leaving them uncovered on your plate for approximately 30 seconds every minute or until they're heated through.
+Enjoy!

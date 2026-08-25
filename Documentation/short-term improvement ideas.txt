@@ -1,0 +1,8 @@
+1. Prompt engineering - make explicit rules instead of using soft language, etc.
+2. one-shot prompting - add in the good kimi example to the prompt so it haas a guide
+3. pipeline style - have two calls to phi4, maybe one to plan and one to execute or one to select ingredients and one to prepare the recipe, or other
+4. validation step - have a hard-coded step that checks output against pantry, maybe leveraging json output
+5. lowering sampling temperature of phi4
+
+
+you can do one of these or some of these or all of these, it's up to you, just make sure you're recognizing the upsides & downsides to each.
