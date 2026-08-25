@@ -354,11 +354,77 @@ body {
     margin-bottom: 4px;
 }
 
+.bubble-content h2,
 .bubble-content h3,
-.bubble-content h4 {
-    margin-top: 14px;
+.bubble-content h4,
+.bubble-content h5 {
+    margin-top: 16px;
     margin-bottom: 8px;
-    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.bubble-content h2 {
+    font-size: 1.25rem;
+}
+
+.bubble-content h3 {
+    font-size: 1.1rem;
+}
+
+.bubble-content h4,
+.bubble-content h5 {
+    font-size: 1.0rem;
+}
+
+.bubble-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.92rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.bubble-content th,
+.bubble-content td {
+    border: 1px solid var(--table-border);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.bubble-content th {
+    background-color: var(--table-header-bg);
+    font-weight: 600;
+    color: #374151;
+}
+
+.bubble-content hr {
+    border: 0;
+    height: 1px;
+    background: #e2e8f0;
+    margin: 16px 0;
+}
+
+.bubble-content blockquote {
+    border-left: 3px solid var(--primary-color);
+    padding-left: 12px;
+    margin: 10px 0;
+    color: #4b5563;
+    font-style: italic;
+    background-color: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 0 6px 6px 0;
+}
+
+.bubble-content code {
+    background-color: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.88em;
 }
 
 .loading-dots {

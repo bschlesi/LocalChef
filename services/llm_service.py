@@ -14,11 +14,11 @@ DEFAULT_MODEL = 'phi4-mini'
 # How often (seconds) to emit a heartbeat event even if Ollama hasn't produced a
 # new token yet. This is what lets the frontend keep an "Xs elapsed" ticker alive
 # instead of going silent.
-HEARTBEAT_SECONDS = 8
+HEARTBEAT_SECONDS = 10
 
 # If this many seconds pass with zero new tokens, we surface a "this looks stuck"
 # warning to the user (but keep listening — we don't kill the request for them).
-STALL_WARNING_SECONDS = 45
+STALL_WARNING_SECONDS = 60
 
 # Hard cap on how many tokens Ollama is allowed to generate for a single response.
 # Small local models can occasionally fall into a repetition loop and just keep
@@ -32,33 +32,135 @@ DEFAULT_MAX_TOKENS: Optional[int] = 1000
 # fall back to the model's default.
 REPEAT_PENALTY: Optional[float] = 1.15
 
-SYSTEM_BASE_PROMPT = """You are LocalChef, an intelligent, helpful, and friendly local cooking assistant.
-Your goal is to help the user cook delicious meals using primarily what they have available in their pantry, or to assist them in preparing shopping lists.
+# Sampling temperature: 0.2 provides high adherence to pantry items and structured formatting.
+DEFAULT_TEMPERATURE: Optional[float] = 0.2
 
-Guidelines:
-1. Always reference and prioritize the ingredients currently available in the user's pantry.
-2. If the user asks for a specific recipe (e.g. "Chicken Fajitas"), build the recipe using the items in their pantry. Clearly indicate which pantry items are being used.
-3. If minor common staples (like salt, water, cooking oil, basic pepper) are needed and not in the pantry, you may mention them as optional or assumed basics.
-4. If a key ingredient is missing from the pantry to make the requested dish, state clearly what's missing and suggest an alternative or note it.
-5. Provide clear, structured output with:
-   - Brief friendly opening acknowledgment
-   - Ingredients list with measurements
-   - Step-by-step numbered cooking instructions
-   - Any requested extras (e.g., macros, meal-prep storage tips)
-6. Strictly adhere to any user custom preferences or constraints provided below.
+SYSTEM_BASE_PROMPT = """You are LocalChef, a precise and expert local cooking assistant.
+Your top priority is generating high-quality recipes tailored strictly to the user's pantry inventory.
+
+MANDATORY RULES FOR RECIPE GENERATION:
+1. STRICT PANTRY ADHERENCE: You MUST ONLY use ingredients that exist in the CURRENT PANTRY INVENTORY. Never assume, invent, or hallucinate ingredients (do not assume butter, eggs, oil, milk, or seasonings exist unless they appear in the pantry inventory).
+2. QUANTITY CONSTRAINTS: Respect the available amounts in the pantry. Do not specify amounts exceeding what is in stock.
+3. STRUCTURED RECIPE FORMAT: Always structure your recipe with these exact markdown sections:
+   - # [Recipe Title]
+   - A brief 1-2 sentence description.
+   - ---
+   - ## Ingredients (formatted as a Markdown table with columns: | Ingredient | Amount | From Pantry |)
+   - ---
+   - ## Equipment Needed (bullet points)
+   - ---
+   - ## Instructions (numbered steps with bold titles, e.g., '### 1. Prep', '### 2. Cook Chicken')
+   - ---
+   - ## Yield & Macros (Markdown table with columns: | Metric | Per Serving | Total Recipe | for Servings, Calories, Protein, Carbs, Fat)
+   - ---
+   - ## Beginner Tips (practical cooking tips, bullet points)
+4. NO UNNECESSARY FILLER: Be concise, clear, and direct in instructions.
+5. STRICT CONSTRAINTS: Adhere 100% to any user custom preferences or diet constraints provided below.
+"""
+
+SHOPPING_BASE_PROMPT = """You are LocalChef, an intelligent grocery shopping assistant.
+Your goal is to analyze the user's CURRENT PANTRY INVENTORY and recommend a practical, organized grocery shopping list.
+
+MANDATORY RULES FOR SHOPPING LIST GENERATION:
+1. RESTOCK & COMPLEMENT: Recommend essential staple restocks, missing ingredients to complete balanced meals, or companion ingredients that pair well with existing pantry items.
+2. CATEGORIZED FORMAT: Structure the grocery list by supermarket department using markdown headers:
+   - # Smart Grocery Shopping List
+   - Brief 1-2 sentence overview of the shopping strategy.
+   - ## Produce (Fruits & Vegetables)
+   - ## Meat & Seafood / Proteins
+   - ## Dairy & Refrigerated
+   - ## Pantry Staples & Grains
+   - ## Canned Goods & Sauces
+   - ## Spices, Oils & Condiments
+   - ## Meal Ideas Unlocked (1-2 bullet points explaining what new dishes can be made with these additions)
+3. ITEM DETAILS & REASONING: Format each item as a bullet point with suggested purchase quantity and the reason it was suggested based on current pantry contents (e.g. "- **Yellow Onions** (3 lbs bag) — Essential aromatic base to pair with your canned black beans and rice").
+4. RESPECT CONSTRAINTS: Adhere 100% to any user custom preferences or diet constraints provided below.
+"""
+
+ONE_SHOT_RECIPE_EXAMPLE = """
+--- EXAMPLE OF A HIGH-QUALITY RECIPE RESPONSE ---
+User Request: Chicken pasta bake
+
+Assistant Response:
+# Cheesy Chicken Pasta Bake
+
+Here's a hearty, beginner-friendly chicken pasta bake using only ingredients from your pantry.
+
+---
+
+## Ingredients
+
+| Ingredient | Amount | From Pantry |
+|---|---|---|
+| Rigatoni | 12 oz | Rigatoni — 16 oz available |
+| Boneless Skinless Chicken Breast | 1.5 lbs | 3 lbs available |
+| Good & Gather Three Cheese Tomato Pasta Sauce | 24 oz | 24 oz available |
+| Fat-Free Milk | 1/2 cup | 0.5 gallons available |
+| Shredded Mozzarella | 8 oz | 8 oz available |
+| Grated Parmesan | 4 oz | 24 oz available |
+| Salt | 1 tsp | available |
+| Black Pepper | 1/2 tsp | available |
+| Garlic Powder | 1 tsp | available |
+| Italian Seasoning | 1 tsp | available |
+
+---
+
+## Equipment Needed
+- Large pot for pasta
+- Large skillet or pan for chicken
+- 9x13 inch baking dish (or any large oven-safe dish)
+- Colander
+- Cutting board and knife
+
+---
+
+## Instructions
+
+### 1. Prep
+Preheat your oven to **375°F (190°C)**. Lightly grease your baking dish.
+
+### 2. Cook the Pasta
+Bring a large pot of salted water to a boil. Add the **12 oz of rigatoni** and cook according to package directions until **al dente** (10–12 minutes). Drain and set aside.
+
+### 3. Cook the Chicken
+Cut the **1.5 lbs of chicken breast** into 1-inch bite-sized cubes. Heat a large skillet over medium-high heat. Season chicken cubes with salt, black pepper, garlic powder, and Italian seasoning. Cook for 6–8 minutes, stirring occasionally, until cooked through. Remove from heat.
+
+### 4. Make the Sauce
+In a large bowl, combine the tomato pasta sauce, fat-free milk, and 2 oz of grated Parmesan. Stir until smooth.
+
+### 5. Assemble the Bake
+In your baking dish, combine cooked rigatoni, cooked chicken, and sauce mixture. Toss until evenly coated.
+
+### 6. Top with Cheese
+Sprinkle the shredded mozzarella and remaining 2 oz of grated Parmesan evenly over the top.
+
+### 7. Bake
+Bake in the preheated oven for 20–25 minutes until the cheese is bubbly and golden brown around the edges. Let cool for 5 minutes before serving.
+
+---
+
+## Beginner Tips
+- **Don't overcook the pasta** in step 2 — it will finish cooking in the oven.
+- **Cut chicken evenly** so all pieces cook at the same speed.
+- **Let it rest** 5 minutes after baking so the sauce thickens and portions hold together.
+---
 """
 
 
-def build_system_message() -> str:
+def build_system_message(for_shopping: bool = False) -> str:
     """Combines base instructions, current pantry contents, and user custom preferences."""
     pantry_str = pantry_service.format_pantry_for_prompt()
     custom_str = settings_service.format_custom_instructions_for_prompt()
 
+    base = SHOPPING_BASE_PROMPT if for_shopping else SYSTEM_BASE_PROMPT
     parts = [
-        SYSTEM_BASE_PROMPT,
+        base,
         "\n--- CURRENT PANTRY INVENTORY ---",
         pantry_str
     ]
+
+    if not for_shopping:
+        parts.append(ONE_SHOT_RECIPE_EXAMPLE)
 
     if custom_str:
         parts.extend([
@@ -75,6 +177,8 @@ def _chat_options() -> Dict[str, Any]:
         options['num_predict'] = DEFAULT_MAX_TOKENS
     if REPEAT_PENALTY is not None:
         options['repeat_penalty'] = REPEAT_PENALTY
+    if DEFAULT_TEMPERATURE is not None:
+        options['temperature'] = DEFAULT_TEMPERATURE
     return options
 
 
@@ -220,7 +324,7 @@ def _stream_chat(model: str, messages: List[Dict[str, str]]) -> Iterator[Dict[st
 
 def stream_recipe(user_prompt: str, model: str = DEFAULT_MODEL) -> Iterator[Dict[str, Any]]:
     """Yields visibility events while generating a recipe from Ollama."""
-    system_message = build_system_message()
+    system_message = build_system_message(for_shopping=False)
     messages = [
         {'role': 'system', 'content': system_message},
         {'role': 'user', 'content': user_prompt}
@@ -230,12 +334,11 @@ def stream_recipe(user_prompt: str, model: str = DEFAULT_MODEL) -> Iterator[Dict
 
 def stream_shopping_list(custom_prompt: Optional[str] = None, model: str = DEFAULT_MODEL) -> Iterator[Dict[str, Any]]:
     """Yields visibility events while generating a shopping list from Ollama."""
-    system_message = build_system_message()
+    system_message = build_system_message(for_shopping=True)
 
     user_instruction = (
-        "I am going grocery shopping. Look at my current pantry inventory above. "
-        "Recommend a sensible grocery shopping list of items I might need to complete versatile meals "
-        "or restock essentials that appear missing/low based on what I have."
+        "I am planning my grocery shopping trip. Look at my current pantry inventory above. "
+        "Recommend a structured shopping list of items to restock essentials and complete versatile meals."
     )
     if custom_prompt and custom_prompt.strip():
         user_instruction += f"\nAdditional note for this shopping trip: {custom_prompt.strip()}"

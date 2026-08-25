@@ -51,6 +51,9 @@ function formatMarkdownToHtml(text) {
     if (!text) return '';
     let escaped = escapeHtml(text);
 
+    // Convert inline code `code`
+    escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+
     // Convert bold **text** or __text__
     escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     escaped = escaped.replace(/__(.*?)__/g, '<strong>$1</strong>');
@@ -59,14 +62,104 @@ function formatMarkdownToHtml(text) {
     escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
     escaped = escaped.replace(/_(.*?)_/g, '<em>$1</em>');
 
-    // Split lines and group into paragraphs or lists
+    // Split lines and group into paragraphs, lists, tables, etc.
     const lines = escaped.split('\n');
     let html = '';
     let inUl = false;
     let inOl = false;
+    let inTable = false;
+    let inBlockquote = false;
 
-    for (let line of lines) {
+    function closeListsAndBlocks() {
+        if (inUl) { html += '</ul>'; inUl = false; }
+        if (inOl) { html += '</ol>'; inOl = false; }
+        if (inTable) { html += '</tbody></table>'; inTable = false; }
+        if (inBlockquote) { html += '</blockquote>'; inBlockquote = false; }
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
         const trimmed = line.trim();
+
+        // Check if line is a table separator: e.g. |---|---| or |:---|---:| or :--- | ---:
+        const isTableSeparator = /^\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?$/.test(trimmed);
+
+        // Check if line looks like a table row (contains pipes)
+        const isTableRow = trimmed.includes('|') && (
+            trimmed.startsWith('|') || 
+            trimmed.endsWith('|') || 
+            (trimmed.match(/\|/g) || []).length >= 2
+        );
+
+        if (isTableSeparator) {
+            // Handled during table header detection, skip
+            continue;
+        }
+
+        if (isTableRow) {
+            if (inUl) { html += '</ul>'; inUl = false; }
+            if (inOl) { html += '</ol>'; inOl = false; }
+            if (inBlockquote) { html += '</blockquote>'; inBlockquote = false; }
+
+            // Extract cells
+            let rawCells = trimmed.split('|');
+            if (trimmed.startsWith('|')) rawCells.shift();
+            if (trimmed.endsWith('|')) rawCells.pop();
+            const cells = rawCells.map(c => c.trim());
+
+            if (!inTable) {
+                // Peek if next line is a separator to confirm table header
+                const nextLine = (i + 1 < lines.length) ? lines[i + 1].trim() : '';
+                const nextIsSeparator = /^\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?$/.test(nextLine);
+
+                html += '<table>';
+                if (nextIsSeparator) {
+                    html += '<thead><tr>';
+                    cells.forEach(c => { html += `<th>${c}</th>`; });
+                    html += '</tr></thead><tbody>';
+                    inTable = true;
+                } else {
+                    html += '<tbody><tr>';
+                    cells.forEach(c => { html += `<td>${c}</td>`; });
+                    html += '</tr>';
+                    inTable = true;
+                }
+            } else {
+                html += '<tr>';
+                cells.forEach(c => { html += `<td>${c}</td>`; });
+                html += '</tr>';
+            }
+            continue;
+        }
+
+        // If we were in a table and this line is not a table row, close table
+        if (inTable) {
+            html += '</tbody></table>';
+            inTable = false;
+        }
+
+        // Horizontal rule
+        if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
+            closeListsAndBlocks();
+            html += '<hr>';
+            continue;
+        }
+
+        // Blockquote
+        if (trimmed.startsWith('&gt; ') || trimmed.startsWith('> ')) {
+            if (inUl) { html += '</ul>'; inUl = false; }
+            if (inOl) { html += '</ol>'; inOl = false; }
+            const bqContent = trimmed.replace(/^(&gt;|>)\s*/, '');
+            if (!inBlockquote) {
+                html += '<blockquote>';
+                inBlockquote = true;
+            }
+            html += `<p>${bqContent}</p>`;
+            continue;
+        } else if (inBlockquote) {
+            html += '</blockquote>';
+            inBlockquote = false;
+        }
 
         // Bullet point
         if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
@@ -82,33 +175,34 @@ function formatMarkdownToHtml(text) {
             html += `<li>${itemText}</li>`;
         }
         // Section headers
+        else if (trimmed.startsWith('#### ')) {
+            closeListsAndBlocks();
+            html += `<h5>${trimmed.substring(5)}</h5>`;
+        }
         else if (trimmed.startsWith('### ')) {
-            if (inUl) { html += '</ul>'; inUl = false; }
-            if (inOl) { html += '</ol>'; inOl = false; }
+            closeListsAndBlocks();
             html += `<h4>${trimmed.substring(4)}</h4>`;
         }
-        else if (trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
-            if (inUl) { html += '</ul>'; inUl = false; }
-            if (inOl) { html += '</ol>'; inOl = false; }
-            const headerText = trimmed.replace(/^#+\s/, '');
-            html += `<h3>${headerText}</h3>`;
+        else if (trimmed.startsWith('## ')) {
+            closeListsAndBlocks();
+            html += `<h3>${trimmed.substring(3)}</h3>`;
+        }
+        else if (trimmed.startsWith('# ')) {
+            closeListsAndBlocks();
+            html += `<h2>${trimmed.substring(2)}</h2>`;
         }
         // Empty line
         else if (trimmed === '') {
-            if (inUl) { html += '</ul>'; inUl = false; }
-            if (inOl) { html += '</ol>'; inOl = false; }
+            closeListsAndBlocks();
         }
         // Normal paragraph
         else {
-            if (inUl) { html += '</ul>'; inUl = false; }
-            if (inOl) { html += '</ol>'; inOl = false; }
+            closeListsAndBlocks();
             html += `<p>${line}</p>`;
         }
     }
 
-    if (inUl) html += '</ul>';
-    if (inOl) html += '</ol>';
-
+    closeListsAndBlocks();
     return html;
 }
 
