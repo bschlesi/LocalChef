@@ -1,24 +1,44 @@
-﻿here's an example I got to work with phi4-mini in he localchef environment. as you can see, it's quite a bad response.
+﻿user input: chicken quesadillas
 
 
-Input: chicken pasta bake
+✅ Done in 3m 25s · 563 tokens · 4.9 tok/s
 
+output:
 
-Response: Hello! I'm excited to help you whip up a delicious Chicken Pasta Bake using what's in your pantry. Let's get started!
-Ingredients List
-Note: Assuming the use of canola oil, salt as an optional base seasoning or any additional common staples that are not listed but assumed (such as eggs for binding).
-* Flour Tortillas: 6 pieces
-* Boneless Skinless Chicken Breast(s): As needed to make a filling volume with gravy.
-* Shredded Mozzarella Cheese: Assumed present from previous inventory checks.
-Cooking Instructions
-1. Preheat your oven according to the pasta bake recipe's recommended temperature (usually around 350°F or about 175°C).
-2. Cook flour tortillas in boiling water until tender, drain them and set aside.
-3. Slice boneless skinless chicken breasts into small cubes for quicker cooking; if necessary cook up a sauce using brown rice as suggested by pantry ingredients to complement the dish - sauté it with garlic powder (use approximately half of what's listed), cumin seeds which are not in your current inventory but commonly available, and spices like chili pepper. Simmer until well combined.
-4. Mix cooked tortillas thoroughly into chicken gravy/sauce created earlier for a binding effect; this step would ideally require eggs as mentioned above to bind the mixture if they were part of our pantry stocks at that time - though we don't have them listed now so we're skipping it, or alternatively using milk (which you do). This creates your pasta bake filling.
-5. Preheat additional oven-safe dish suitable for baking such a recipe; place chicken and cheese mix inside ensuring it's evenly spread out in the bottom of this tray/pan/bake ware to allow even cooking/cooking through without burning any parts, cover with foil loosely (to trap moisture within) before placing into an already-preheated 350°F/175°C oven.
-6. Bake for approximately twenty minutes until heated thoroughly throughout; remove from heat and let it cool a bit down after taking out of the bakeware/pan/bread to allow flavors better integrate together - this step can be skipped if time constraints are in place or not desired by you as per your custom preferences.
-Extras
-Macros: Assuming approximately 450-500 calories, based on chicken breast used for filling and ingredients listed above.
-Meal-prep storage tips:
-Storing leftover pasta bake? Place it into an airtight container to keep fresh up-to four days when stored in a refrigerator. Before serving again later ensure it's reheated thoroughly (to eliminate bacteria). You can also warm leftovers using microwave, ideally leaving them uncovered on your plate for approximately 30 seconds every minute or until they're heated through.
-Enjoy!
+Chicken Quesadilla
+A delicious, quick meal using only ingredients from your pantry.
+
+## Ingredients (Formatted as a Markdown table with columns:	Ingredient	Amount	From Pantry
+Flour Tortillas	4 pieces	Floured tortillas — available
+Boneless Skinless Chicken Breast	1 pound	Available chicken breast, cut into small cubes for quicker cooking. Total weight used is approximately half a pound to ensure the quesadilla doesn't become too heavy or difficult to handle while hot.
+Grated Parmesan Cheese (Parmesan)	About two tablespoons per tortilla
+Shredded Mozzarella	Approximately one cup total, divided evenly between tortillas
+Equipment Needed
+Large skillet for cooking chicken and assembling the quesadilla
+Instructions:
+Prep Work:
+Preheat your large pan over medium heat.
+Season half of a pound (approximately) boneless skinless Chicken breast with salt.
+Note: The amount used here is approximately 0.5 pounds, which ensures that there are enough ingredients left for the other tortilla and cheese filling while maintaining balance in flavor across both quesadillas.
+
+Cook:
+Add chicken to pan.
+Cover loosely; cook until browned on one side (about five minutes), then flip over carefully.
+Note: Cooking time is approximately 10-12 minutes, depending upon heat level of the skillet and thickness/cutting size for Chicken breast pieces used in this recipe.
+
+Assemble:
+Remove chicken from pan.
+Place half a tortilla into center; top with cooked boneless skinless Chicken breasts (approximately one pound total), then sprinkle generously over grated Parmesan cheese.
+Note: This step ensures that the filling is evenly distributed across each quesadilla, providing consistent flavor and texture.
+
+Cook:
+Cover loosely again until heated through.
+Flip carefully onto second tortilla; repeat process with remaining ingredients for other half of Chicken breast (approximately 0.5 pounds total).
+Yield & Macros
+Metric	Per Serving
+Calories	Approximately: ~600-700 per serving depending upon weight and size used in this recipe, as well as heat level applied to pan during cooking process.
+Protein	About : 30 grams (approximately) total protein from Chicken breast
+Carbs	Less than one gram net carbs for each tortilla due to lack of added sugars or starches.
+Beginner Tips
+Don't overcook the chicken — it should be cooked through but still have a bit pink in its center.
+Use medium heat when cooking quesadillas; this helps prevent burning and ensures even heating across both tortillas.
