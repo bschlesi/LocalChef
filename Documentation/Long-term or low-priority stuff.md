@@ -1,10 +1,64 @@
-* update the data stuff so it will just write a file if it doesn't see a pantry.csv - probably good practice if this ever gets ported over to another device
-* remove all the emojis from the ui because it makes it look much lower effort in my opinion
-* if/when the recipe generation prompt gets beefed up and made more strict we should also improve the shopping list prompt as well
-* see if I can get qwen3.5 to work that would be great. given current laptop specs I can't a qwen3.5 larger than 4b to run fast enough, but even that model might be better than phi4-mini. Problem I've ran in with testing though is that qwen thinks so much, meaning by the time you get to the target token range for the output there's been a combined thought+response token count of like 2k+
-* Live storing of ingredients: right now I'd have to manually go in every time i use an ingredient, but if I'm primarily using the LocalChef generated recipes then I have all the stuff I just used already reported. just have a button after a response is finished that's like "I made this recipe - remove these ingredients" or something like that
-* recipe history tracker: once the button is in place to see if user made recipe, we'd then have the ability to store the recipes the user liked. this data could then most relevantly be used for the shopping generation
-* historic pantry: similar ideas as recipe used tracker but the more data that can be stored on what the user does locally the better likely. maybe could be used for shopping list generation, more examples for the model generation in prompts, maybe other stuff too?
-* redesign the ui because it looks like the inspiration (me) took 2 minutes to make (it did)
-* make the readme more for the "ive never seen anything like this" crowd, really the user-not-developer crowd
+# LocalChef - Long-Term & Low-Priority Objectives
 
+This document outlines strategic, architectural, and lower-priority roadmap goals for LocalChef.
+
+---
+
+## 1. Local SLM Exploration & Benchmarking
+* **Explore Non-Thinking vs. Thinking Models**:
+  - Test lightweight instruction models (e.g. `qwen2.5:3b-instruct`, `llama3.2:3b`, `gemma2:2b`) as alternatives to `phi4-mini`.
+  - **The Thinking Model Problem**: When testing models with chain-of-thought (e.g., Qwen 3.5 / R1 distillations), reasoning tokens inflate the total token count past 2,000+ tokens, slowing down CPU inference significantly.
+  - Evaluate techniques to disable reasoning tokens, strip thought tags before streaming to UI, or enforce strict output schemas.
+* **Performance Profiling on Consumer Hardware**:
+  - Target: Keep generation time under 3-5 minutes (minimum ~3-5 tok/s on typical 13th Gen Intel Core i7 / 16GB RAM laptops with Intel Iris Xe graphics).
+
+---
+
+## 2. Recipe History, Favorites & Cook Log
+* **Local Recipe Database**:
+  - Store generated recipes that the user marks as cooked or favorites into a lightweight local SQLite database (`recipes.db`) or JSON store.
+* **User Feedback & Custom Notes**:
+  - Allow users to rate recipes (1-5 stars), add cooking notes (e.g., "Used 2 tsp salt instead of 1", "Needed 5 extra minutes in oven"), and re-generate modified versions.
+* **Personalized Feedback Loop**:
+  - Feed favorite recipes and flavor profiles into future recipe and shopping list prompts.
+
+---
+
+## 3. Historic Pantry & Predictive Grocery Intelligence
+* **Ingredient Lifecycle & Velocity Tracking**:
+  - Record history of purchased and consumed ingredients (e.g., user buys chicken breasts every 2 weeks, pasta box lasts 3 meals).
+* **Smart Restock Prediction**:
+  - Upgrade the **"I'm going shopping"** SLM prompt by supplying consumption velocity data to predict what staples are likely running low before they run out completely.
+
+---
+
+## 4. Kitchen "Cook Mode" & Voice/Timer Assistance
+* **Step-by-Step Focus Mode**:
+  - A distraction-free, large-type UI view designed for kitchen counter devices (tablets/phones).
+  - High-contrast buttons and gestures for hands-free or messy-hand usability.
+* **Integrated Timers**:
+  - Automatically parse time mentions from instruction steps (e.g., "bake for 25 minutes") and provide interactive one-tap timers with browser audio alerts.
+* **Hands-Free Voice Commands**:
+  - Integrate local speech-to-text (e.g., Whisper.cpp / Web Speech API) for voice commands like *"Next step"*, *"Read current step"*, or *"Set timer for 10 minutes"*.
+
+---
+
+## 5. Offline Nutritional Analysis & Macro Profiling
+* **Accurate Macro Engine**:
+  - Complement model estimations with an offline USDA FoodData Central lookup or local nutrition dictionary to give verified macronutrient (protein, carbs, fat, calories) calculations per serving.
+* **Dietary & Calorie Goal Tracking**:
+  - Allow users to specify daily macro/calorie targets and let the recipe generator size ingredient proportions to hit those targets accurately.
+
+---
+
+## 6. Barcode & Receipt Scanning (Fast Pantry Input)
+* **Barcode Scanner**:
+  - Integrate barcode lookup (via OpenFoodFacts offline dump or camera-based barcode scanning) to quickly add packaged pantry items with quantities and units.
+* **Receipt OCR**:
+  - Allow uploading grocery receipts or images to automatically extract and populate new items into `pantry.csv`.
+
+---
+
+## 7. Local Network Access & Multi-Device Sync
+* **LAN Hosting**:
+  - Provide a simple toggle/flag to bind Flask to `0.0.0.0` with a generated QR code in the terminal or browser, allowing immediate access from mobile devices on the same Wi-Fi network without external cloud exposure.

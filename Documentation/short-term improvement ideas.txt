@@ -1,8 +1,65 @@
-1. Prompt engineering - make explicit rules instead of using soft language, etc.
-2. one-shot prompting - add in the good kimi example to the prompt so it haas a guide
-3. pipeline style - have two calls to phi4, maybe one to plan and one to execute or one to select ingredients and one to prepare the recipe, or other
-4. validation step - have a hard-coded step that checks output against pantry, maybe leveraging json output
-5. lowering sampling temperature of phi4
+# LocalChef - Short-Term Improvement Objectives
 
+This document tracks immediate and high-priority improvements for LocalChef. Focus is placed on reliability of SLM recipe generation, pantry data synchronization, and user experience.
 
-you can do one of these or some of these or all of these, it's up to you, just make sure you're recognizing the upsides & downsides to each.
+---
+
+## 1. Ingredient Deduction & "I Made This" Action (High Priority)
+* **Goal**: Enable one-click pantry inventory update after cooking a generated recipe.
+* **Details**:
+  - Add an **"I Made This Recipe"** button at the bottom of generated recipes.
+  - Parse the ingredients table from the SLM response.
+  - Present an interactive confirmation modal/checklist allowing the user to adjust quantities used before deducting from `pantry.csv` (or removing depleted items).
+  - Eliminates the need to manually navigate to `/pantry` and remove each item by hand.
+
+---
+
+## 2. Recipe Quality & Pipeline Architecture
+* **Pipeline / Two-Stage Generation**:
+  - Split generation into a 2-step pipeline if single-step prompts struggle with complex pantries:
+    - *Step 1 (Planner / Selector)*: Model selects viable ingredients and recipe concept.
+    - *Step 2 (Chef / Executor)*: Model drafts the step-by-step instructions and yields based strictly on selected items.
+* **Validation & Hallucination Guardrail**:
+  - Add an automated post-generation checker that parses the recipe's ingredient list against the active `pantry.csv`.
+  - Flag or visually highlight any ingredients in the UI that were not present in the pantry inventory.
+* **JSON / Structured Output Integration**:
+  - Test Ollama structured output mode (`format="json"` or Pydantic schema) for recipes to guarantee machine-parsable ingredients, equipment, instructions, and macro tables.
+
+---
+
+## 3. UI & Cooking Experience Enhancements
+* **Visual Recipe Cards & Copy/Export**:
+  - Format ingredients into clean tables or checklist cards.
+  - Add a **Copy Recipe to Clipboard** and **Print / Save as Markdown/PDF** button.
+  - Add interactive checkable instruction steps for following along while cooking.
+* **Mobile / Tablet Kitchen Responsive View**:
+  - Optimize the layout and touch targets for mobile and tablet screens positioned on kitchen counters.
+
+---
+
+## 4. Settings & Model Configuration UI
+* **Model & Generation Settings**:
+  - Add a Model Settings section to the `/customization` page allowing users to configure:
+    - Target Ollama model name (e.g., `phi4-mini`, `qwen2.5:3b`, `llama3.2:3b`).
+    - Generation temperature slider (default `0.2`).
+    - Max response token cap.
+    - Repetition penalty.
+* **Dynamic Connection Check**:
+  - Show live status of Ollama connection and available local models in the settings/cooking view.
+
+---
+
+## 5. User Documentation & Beginner Onboarding
+* **Non-Developer Friendly README & Guide**:
+  - Overhaul `README.md` to be welcoming to non-developer home cooks.
+  - Include clear setup instructions, troubleshooting (e.g., starting Ollama), and visual screenshots/GIFs.
+  - Document the `run.bat` one-click launcher clearly.
+
+---
+
+## Completed Improvements (Archive)
+* [x] **Prompt Engineering**: Replaced soft language with explicit, mandatory generation rules for recipes and shopping lists in `llm_service.py`.
+* [x] **One-Shot Recipe Prompting**: Ingested high-quality one-shot recipe demonstration (based on Kimi K3 benchmark) into system prompt.
+* [x] **Low Sampling Temperature**: Configured sampling temperature to `0.2` to reduce hallucinations and enforce strict pantry adherence.
+* [x] **Automated Pantry Initialization**: Automatically generates `data/` directory and `pantry.csv` with standard headers if not present on startup.
+* [x] **UI Emoji Clean-up**: Modernized UI layout with clean SVG icons, Inter typography, and removed distracting emoji clutter.

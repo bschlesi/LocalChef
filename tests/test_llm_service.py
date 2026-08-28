@@ -4,7 +4,7 @@ from services import llm_service, pantry_service, settings_service
 
 def test_chat_options():
     opts = llm_service._chat_options()
-    assert opts.get('num_predict') == 1300
+    assert opts.get('num_predict') == llm_service.DEFAULT_MAX_TOKENS
     assert opts.get('repeat_penalty') == 1.15
     assert opts.get('temperature') == 0.2
 
