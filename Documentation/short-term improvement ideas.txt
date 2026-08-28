@@ -14,7 +14,18 @@ This document tracks immediate and high-priority improvements for LocalChef. Foc
 
 ---
 
-## 2. Recipe Quality & Pipeline Architecture
+## 2. Standalone Desktop Window / App Mode Emulation
+* **Goal**: Run LocalChef in its own dedicated, native-feeling window instead of a standard browser tab.
+* **Implementation Options**:
+  - **Chromium / Edge App Mode (Zero new dependencies)**:
+    - Update `run.bat` / launcher script to open Chrome or Edge with `--app=http://127.0.0.1:5000 --window-size=1200,800`.
+    - Strips away browser address bars, navigation buttons, and bookmarks for an immediate native desktop app experience.
+  - **`pywebview` Window Wrapper**:
+    - Add lightweight `pywebview` integration in Python so starting the app directly opens a native GUI window with custom window controls and icon.
+
+---
+
+## 3. Recipe Quality & Pipeline Architecture
 * **Pipeline / Two-Stage Generation**:
   - Split generation into a 2-step pipeline if single-step prompts struggle with complex pantries:
     - *Step 1 (Planner / Selector)*: Model selects viable ingredients and recipe concept.
@@ -27,7 +38,7 @@ This document tracks immediate and high-priority improvements for LocalChef. Foc
 
 ---
 
-## 3. UI & Cooking Experience Enhancements
+## 4. UI & Cooking Experience Enhancements
 * **Visual Recipe Cards & Copy/Export**:
   - Format ingredients into clean tables or checklist cards.
   - Add a **Copy Recipe to Clipboard** and **Print / Save as Markdown/PDF** button.
@@ -37,7 +48,7 @@ This document tracks immediate and high-priority improvements for LocalChef. Foc
 
 ---
 
-## 4. Settings & Model Configuration UI
+## 5. Settings & Model Configuration UI
 * **Model & Generation Settings**:
   - Add a Model Settings section to the `/customization` page allowing users to configure:
     - Target Ollama model name (e.g., `phi4-mini`, `qwen2.5:3b`, `llama3.2:3b`).
@@ -49,7 +60,7 @@ This document tracks immediate and high-priority improvements for LocalChef. Foc
 
 ---
 
-## 5. User Documentation & Beginner Onboarding
+## 6. User Documentation & Beginner Onboarding
 * **Non-Developer Friendly README & Guide**:
   - Overhaul `README.md` to be welcoming to non-developer home cooks.
   - Include clear setup instructions, troubleshooting (e.g., starting Ollama), and visual screenshots/GIFs.

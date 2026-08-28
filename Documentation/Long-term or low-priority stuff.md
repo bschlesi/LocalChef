@@ -32,7 +32,16 @@ This document outlines strategic, architectural, and lower-priority roadmap goal
 
 ---
 
-## 4. Kitchen "Cook Mode" & Voice/Timer Assistance
+## 4. Standalone Desktop Packaging & App Distribution
+* **Native Desktop Bundle (.exe / installer)**:
+  - Package the Flask backend, frontend assets, and Python runtime into a single standalone installer/executable (using PyInstaller, Tauri, or Electron).
+  - Eliminates the need for end users to install Python, git, or command-line dependencies.
+* **Embedded Ollama & Model Lifecycle Management**:
+  - Automatic detection of Ollama service status with in-app buttons to start Ollama or pull models (`phi4-mini`, etc.) directly from the GUI.
+
+---
+
+## 5. Kitchen "Cook Mode" & Voice/Timer Assistance
 * **Step-by-Step Focus Mode**:
   - A distraction-free, large-type UI view designed for kitchen counter devices (tablets/phones).
   - High-contrast buttons and gestures for hands-free or messy-hand usability.
@@ -43,7 +52,7 @@ This document outlines strategic, architectural, and lower-priority roadmap goal
 
 ---
 
-## 5. Offline Nutritional Analysis & Macro Profiling
+## 6. Offline Nutritional Analysis & Macro Profiling
 * **Accurate Macro Engine**:
   - Complement model estimations with an offline USDA FoodData Central lookup or local nutrition dictionary to give verified macronutrient (protein, carbs, fat, calories) calculations per serving.
 * **Dietary & Calorie Goal Tracking**:
@@ -51,7 +60,7 @@ This document outlines strategic, architectural, and lower-priority roadmap goal
 
 ---
 
-## 6. Barcode & Receipt Scanning (Fast Pantry Input)
+## 7. Barcode & Receipt Scanning (Fast Pantry Input)
 * **Barcode Scanner**:
   - Integrate barcode lookup (via OpenFoodFacts offline dump or camera-based barcode scanning) to quickly add packaged pantry items with quantities and units.
 * **Receipt OCR**:
@@ -59,6 +68,6 @@ This document outlines strategic, architectural, and lower-priority roadmap goal
 
 ---
 
-## 7. Local Network Access & Multi-Device Sync
+## 8. Local Network Access & Multi-Device Sync
 * **LAN Hosting**:
   - Provide a simple toggle/flag to bind Flask to `0.0.0.0` with a generated QR code in the terminal or browser, allowing immediate access from mobile devices on the same Wi-Fi network without external cloud exposure.
